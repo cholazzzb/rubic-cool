@@ -1,0 +1,57 @@
+.control-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.control-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  margin: 7px;
+  border-radius: 10px;
+  background-color: #fff;
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 1px #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.control-button:hover {
+  background-color: rgb(212, 212, 212);
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: 0 0 0 1px rgb(68, 68, 68);
+}
+
+.color-red {
+  background-color: rgb(244, 191, 255);
+}
+
+.color-green {
+  background-color: rgb(183, 229, 221);
+}
+
+.color-blue {
+  background-color: rgb(177, 188, 230);
+}
+
+.color-yellow {
+  background-color: rgb(241, 240, 192);
+}
+
+.color-magentta {
+  background-color: rgb(185, 131, 255);
+}
+
+.color-orange {
+  background-color: rgb(255, 217, 192);
+}
+
+.color-brown {
+  background-color: rgb(191, 139, 103);
+}
