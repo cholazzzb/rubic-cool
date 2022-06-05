@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Rubic } from "./domain/rubic/rubic";
-import { ColorEnum } from "./shared_library/components/color_enum";
+import { Rubic } from "@/feature/cube/rubic";
+import { ColorEnum } from "@/shared_library/components/color_enum";
 
 const camera = new THREE.PerspectiveCamera(
   75,
