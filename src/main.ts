@@ -1,100 +1,62 @@
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Rubic } from "@/feature/cube/rubic";
-import { ColorEnum } from "@/shared_library/components/color_enum";
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+import { Rubic } from '@/feature/cube/rubic';
+
+import { DIRECTION } from './shared_library/components/direction_enum';
+import { FACE } from './shared_library/components/face_enum';
 
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.1,
-  1000
+  1000,
 );
-camera.position.z = 1;
-camera.position.x = 0.3;
-camera.position.y = 0.3;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x3d426b);
 
-// Start of FOR DEVELOPMENT PURPOSE ONLY
-const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2).toNonIndexed();
-const material = new THREE.MeshBasicMaterial({ vertexColors: true });
-
 const axesHelper = new THREE.AxesHelper(5);
+axesHelper.setColors(
+  new THREE.Color('magenta'),
+  new THREE.Color('yellow'),
+  new THREE.Color('cyan'),
+);
 scene.add(axesHelper);
 
-const positionAttribute = geometry.getAttribute("position");
-const colors: Array<number> = [];
-
-const xColors = [
-  ColorEnum.red,
-  ColorEnum.blue,
-  ColorEnum.orange,
-  ColorEnum.green,
-  ColorEnum.magenta,
-  ColorEnum.brown,
-];
-
-for (let i = 0; i < positionAttribute.count; i += 6) {
-  const ac = Math.floor(i / 6) > 5 ? 5 : Math.floor(i / 6);
-  // define the same color for each vertex of a triangle
-  const c = xColors[ac];
-
-  colors.push(c.r, c.g, c.b);
-  colors.push(c.r, c.g, c.b);
-  colors.push(c.r, c.g, c.b);
-  colors.push(c.r, c.g, c.b);
-  colors.push(c.r, c.g, c.b);
-  colors.push(c.r, c.g, c.b);
-}
-// End ofFOR DEVELOPMENT PURPOSE ONLY
-
-// define the new attribute
-
-geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-
-const mesh = new THREE.Mesh(geometry, material);
-mesh.position.x = 1;
-scene.add(mesh);
-
-const rubic = new Rubic(scene);
-rubic.render();
-
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.querySelector("#canvas") as HTMLCanvasElement,
+  canvas: document.querySelector('#canvas') as HTMLCanvasElement,
 });
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 const controls = new OrbitControls(camera, renderer.domElement);
 
-camera.position.set(0, 0, 1);
-controls.update();
-renderer.render(scene, camera);
+camera.position.set(0.5, 0.5, 0.5);
 
-function animate() {
-  requestAnimationFrame(animate);
-
+function onAnimate() {
   controls.update();
-
   renderer.render(scene, camera);
 }
 
-animate();
+onAnimate();
 
-const main = document.querySelector("main") as HTMLElement;
-const container = document.createElement("div");
-container.className = "control-container";
+const rubic = new Rubic(scene, onAnimate);
+rubic.render();
+
+const main = document.querySelector('main') as HTMLElement;
+const container = document.createElement('div');
+container.className = 'control-container';
 main.appendChild(container);
 
 const createController = (
   text: string,
   onClick: () => void,
-  cssClass?: Array<string>
+  cssClass?: Array<string>,
 ) => {
-  const buttonEl = document.createElement("button");
-  buttonEl.className = "control-button";
-  cssClass?.forEach((c) => buttonEl.classList.add(c));
+  const buttonEl = document.createElement('button');
+  buttonEl.className = 'control-button';
+  cssClass?.forEach((css) => buttonEl.classList.add(css));
   const buttonElText = document.createTextNode(text);
   buttonEl.appendChild(buttonElText);
   buttonEl.onclick = onClick;
@@ -102,20 +64,60 @@ const createController = (
   container.appendChild(buttonEl);
 };
 
-createController("Up", () => rubic.rotateUpC(), ["color-red"]);
-createController("Up'", () => rubic.rotateUpCC(), ["color-red"]);
+createController('Up C', () => rubic.rotate(FACE.TOP, DIRECTION.CLOCKWISE), [
+  'color-red',
+]);
+createController(
+  'Up CC',
+  () => rubic.rotate(FACE.TOP, DIRECTION.COUNTERCLOCKWISE),
+  ['color-red'],
+);
 
-createController("Down", () => rubic.rotateDownC(), ["color-green"]);
-createController("Down'", () => rubic.rotateDownCC(), ["color-green"]);
+createController('Down', () => rubic.rotate(FACE.BOTTOM, DIRECTION.CLOCKWISE), [
+  'color-green',
+]);
+createController(
+  'Down CC',
+  () => rubic.rotate(FACE.BOTTOM, DIRECTION.COUNTERCLOCKWISE),
+  ['color-green'],
+);
 
-createController("Left", () => rubic.rotateLeftC(), ["color-blue"]);
-createController("Left'", () => rubic.rotateLeftCC(), ["color-blue"]);
+createController('Left C', () => rubic.rotate(FACE.LEFT, DIRECTION.CLOCKWISE), [
+  'color-blue',
+]);
+createController(
+  'Left CC',
+  () => rubic.rotate(FACE.LEFT, DIRECTION.COUNTERCLOCKWISE),
+  ['color-blue'],
+);
 
-createController("Right", () => rubic.rotateRightC(), ["color-magenta"]);
-createController("Right'", () => rubic.rotateRightCC(), ["color-magenta"]);
+createController(
+  'Right C',
+  () => rubic.rotate(FACE.RIGHT, DIRECTION.CLOCKWISE),
+  ['color-magenta'],
+);
+createController(
+  'Right CC',
+  () => rubic.rotate(FACE.RIGHT, DIRECTION.COUNTERCLOCKWISE),
+  ['color-magenta'],
+);
 
-createController("Front", () => rubic.rotateFrontC(), ["color-orange"]);
-createController("Front'", () => rubic.rotateFrontCC(), ["color-orange"]);
+createController(
+  'Front C',
+  () => rubic.rotate(FACE.FRONT, DIRECTION.CLOCKWISE),
+  ['color-orange'],
+);
+createController(
+  'Front CC',
+  () => rubic.rotate(FACE.FRONT, DIRECTION.COUNTERCLOCKWISE),
+  ['color-orange'],
+);
 
-createController("Back", () => rubic.rotateBackC(), ["color-brown"]);
-createController("Back'", () => rubic.rotateBackCC(), ["color-brown"]);
+createController('Back C', () => rubic.rotate(FACE.BACK, DIRECTION.CLOCKWISE), [
+  'color-brown',
+]);
+createController(
+  'Back CC',
+  () => rubic.rotate(FACE.BACK, DIRECTION.COUNTERCLOCKWISE),
+  ['color-brown'],
+);

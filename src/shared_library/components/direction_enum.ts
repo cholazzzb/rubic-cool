@@ -1,4 +1,4 @@
-export enum DirectionEnum {
-  C = "CLOCKWISE",
-  CC = "COUNTERCLOCKWISE",
+export enum DIRECTION {
+  CLOCKWISE = 'CLOCKWISE',
+  COUNTERCLOCKWISE = 'COUNTERCLOCKWISE',
 }

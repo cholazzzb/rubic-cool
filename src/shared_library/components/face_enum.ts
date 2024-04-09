@@ -1,8 +1,8 @@
-export enum FaceEnum {
-  UP = "UP",
-  DOWN = "DOWN",
-  LEFT = "LEFT",
-  RIGHT = "RIGHT",
-  FRONT = "FRONT",
-  BACK = "BACK",
+export enum FACE {
+  TOP = 'TOP',
+  BOTTOM = 'BOTTOM',
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+  FRONT = 'FRONT',
+  BACK = 'BACK',
 }
