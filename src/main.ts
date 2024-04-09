@@ -34,6 +34,14 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 camera.position.set(0.5, 0.5, 0.5);
 
+function updateControl() {
+  requestAnimationFrame(updateControl);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+updateControl();
+
 function onAnimate() {
   controls.update();
   renderer.render(scene, camera);
