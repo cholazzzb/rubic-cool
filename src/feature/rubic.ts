@@ -1,10 +1,10 @@
 import { Group, MathUtils, Quaternion, Vector3 } from 'three';
 
 import { Cube } from '@/feature/cube/cube';
-import { ColorEnum } from '@/shared_library/components/color_enum';
-import { FACE } from '@/shared_library/components/face_enum';
-import { DIRECTION } from '@/shared_library/components/direction_enum';
-import { animate, animateRepeat } from '../animator';
+import { animate, animateRepeat } from './animator';
+import { DIRECTION } from '@/shared/direction_enum';
+import { FACE } from '@/shared/face_enum';
+import { ColorEnum } from '@/shared/color_enum';
 
 /**
  * @description

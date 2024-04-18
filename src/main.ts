@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-import { Rubic } from '@/feature/cube/rubic';
+import { Rubic } from '@/feature/rubic';
 
-import { DIRECTION } from './shared_library/components/direction_enum';
-import { FACE } from './shared_library/components/face_enum';
+import { DIRECTION } from './shared/direction_enum';
+import { FACE } from './shared/face_enum';
 
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -57,11 +57,11 @@ const container = document.createElement('div');
 container.className = 'control-container';
 main.appendChild(container);
 
-const createController = (
+function createController(
   text: string,
   onClick: () => void,
   cssClass?: Array<string>,
-) => {
+) {
   const buttonEl = document.createElement('button');
   buttonEl.className = 'control-button';
   cssClass?.forEach((css) => buttonEl.classList.add(css));
@@ -70,7 +70,7 @@ const createController = (
   buttonEl.onclick = onClick;
 
   container.appendChild(buttonEl);
-};
+}
 
 createController('Up C', () => rubic.rotate(FACE.TOP, DIRECTION.CLOCKWISE), [
   'color-red',

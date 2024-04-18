@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 
-import { DIRECTION } from '@/shared_library/components/direction_enum';
-import { FACE } from '@/shared_library/components/face_enum';
+import { DIRECTION } from '@/shared/direction_enum';
+import { FACE } from '@/shared/face_enum';
 import { Rubic } from './rubic';
 
 describe('should rotate cube correctly', () => {
