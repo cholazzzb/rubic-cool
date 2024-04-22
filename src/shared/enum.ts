@@ -1,3 +1,8 @@
+export enum DIRECTION {
+  CLOCKWISE = 'CLOCKWISE',
+  COUNTERCLOCKWISE = 'COUNTERCLOCKWISE',
+}
+
 export enum FACE {
   TOP = 'TOP',
   BOTTOM = 'BOTTOM',

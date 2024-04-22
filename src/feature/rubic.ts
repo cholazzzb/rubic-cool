@@ -1,10 +1,10 @@
-import { Group, MathUtils, Quaternion, Vector3 } from 'three';
+import { Euler, Group, MathUtils, Quaternion, Vector3 } from 'three';
 
-import { Cube } from '@/feature/cube/cube';
+import { Cube, CubeName } from '@/feature/cube';
+import { DIRECTION, FACE } from '@/shared/enum';
 import { animate, animateRepeat } from './animator';
-import { DIRECTION } from '@/shared/direction_enum';
-import { FACE } from '@/shared/face_enum';
-import { ColorEnum } from '@/shared/color_enum';
+import { flattenArray } from '@/shared/array';
+import { rubikInitColor } from './color';
 
 /**
  * @description
@@ -65,15 +65,13 @@ export class Rubic {
     this.scene = scene;
     this.onAnimate = onAnimate;
 
-    const colors = this.buildColor();
-
     const cubes = [];
     for (let x = 0; x < 3; x++) {
       const xs = [];
       for (let y = 0; y < 3; y++) {
         const ys = [];
         for (let z = 0; z < 3; z++) {
-          ys.push(new Cube(colors, `${x}-${y}-${z}`));
+          ys.push(new Cube(`${x}-${y}-${z}` as CubeName));
         }
         xs.push(ys);
       }
@@ -374,33 +372,6 @@ export class Rubic {
     return backFaceCube;
   }
 
-  buildColor() {
-    const result: Array<number> = [];
-
-    const xColors = [
-      ColorEnum.softPink,
-      ColorEnum.babyBlue,
-      ColorEnum.peach,
-      ColorEnum.mintGreen,
-      ColorEnum.lavender,
-      ColorEnum.paleYellow,
-    ];
-
-    for (let i = 0; i < 6; i++) {
-      // define the same color for each vertex of a triangle
-      const c = xColors[i];
-
-      result.push(c.r, c.g, c.b);
-      result.push(c.r, c.g, c.b);
-      result.push(c.r, c.g, c.b);
-      result.push(c.r, c.g, c.b);
-      result.push(c.r, c.g, c.b);
-      result.push(c.r, c.g, c.b);
-    }
-
-    return result;
-  }
-
   render() {
     const size = Rubic.size;
     const halfSize = Rubic.halfSize;
@@ -419,5 +390,41 @@ export class Rubic {
     });
 
     animate({ onAnimate: this.onAnimate });
+  }
+
+  resetColor() {
+    const cubes = flattenArray(this.getCubes());
+    cubes.forEach((cube) =>
+      cube.getMesh().geometry.setAttribute('color', rubikInitColor),
+    );
+  }
+}
+
+export function faceNormalToRubikFace(params: {
+  normal?: Vector3;
+  rotation: Euler;
+}): FACE | null {
+  const { normal, rotation } = params;
+  if (!normal) return null;
+
+  const quaternion = new Quaternion().setFromEuler(rotation);
+
+  const rotatedNormal = normal?.clone().applyQuaternion(quaternion).round();
+
+  switch (`${rotatedNormal?.x},${rotatedNormal?.y},${rotatedNormal?.z}`) {
+    case '1,0,0':
+      return FACE.RIGHT;
+    case '-1,0,0':
+      return FACE.LEFT;
+    case '0,1,0':
+      return FACE.TOP;
+    case '0,-1,0':
+      return FACE.BOTTOM;
+    case '0,0,1':
+      return FACE.FRONT;
+    case '0,0,-1':
+      return FACE.BACK;
+    default:
+      return null;
   }
 }
