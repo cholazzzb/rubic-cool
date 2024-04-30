@@ -163,24 +163,23 @@ const container = document.createElement('div');
 container.className = 'control-container';
 main.appendChild(container);
 
-// TODO: Next Features
-// function createController(
-//   text: string,
-//   onClick: () => void,
-//   cssClass?: Array<string>,
-// ) {
-//   const buttonEl = document.createElement('button');
-//   buttonEl.className = 'control-button';
-//   cssClass?.forEach((css) => buttonEl.classList.add(css));
-//   const buttonElText = document.createTextNode(text);
-//   buttonEl.appendChild(buttonElText);
-//   buttonEl.onclick = onClick;
+function createController(
+  text: string,
+  onClick: (event: MouseEvent) => void,
+  cssClass?: Array<string>,
+) {
+  const buttonEl = document.createElement('button');
+  buttonEl.className = 'control-button';
+  cssClass?.forEach((css) => buttonEl.classList.add(css));
+  const buttonElText = document.createTextNode(text);
+  buttonEl.appendChild(buttonElText);
+  buttonEl.onclick = onClick;
 
-//   container.appendChild(buttonEl);
-// }
+  container.appendChild(buttonEl);
+}
 
-// createController('Shuffle', () => {}, ['color-red']);
+createController('Shuffle', (_event) => rubic.shuffle(), ['color-red']);
 
-// createController('Solve', () => {}, ['color-green']);
+// createController('Solve', (_event) => rubic.solve(), ['color-green']);
 
 // createController('Solve by AI', () => {}, ['color-blue']);

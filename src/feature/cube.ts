@@ -12,7 +12,7 @@ export class Cube {
   private geometry: THREE.BufferGeometry;
   private mesh: THREE.Mesh;
   private line: THREE.LineSegments;
-  private name: string;
+  private name: CubeName;
   constructor(name: CubeName, size: number = 0.1) {
     this.geometry = new BoxGeometry(size, size, size).toNonIndexed();
     this.geometry.setAttribute('color', rubikInitColor);

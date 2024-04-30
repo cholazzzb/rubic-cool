@@ -1,9 +1,9 @@
 import { Euler, Group, MathUtils, Quaternion, Vector3 } from 'three';
 
 import { Cube, CubeName } from '@/feature/cube';
+import { flattenArray, getRandomArrEl } from '@/shared/array';
 import { DIRECTION, FACE } from '@/shared/enum';
 import { animate, animateRepeat } from './animator';
-import { flattenArray } from '@/shared/array';
 import { rubikInitColor } from './color';
 
 /**
@@ -81,17 +81,17 @@ export class Rubic {
     this.cubes = cubes;
   }
 
-  rotate(face: FACE, direction: DIRECTION) {
+  rotate(face: FACE, direction: DIRECTION, repeat = 18) {
     switch (face) {
       case FACE.TOP: {
         const cubes = this.getTopFaceCube();
         switch (direction) {
           case DIRECTION.CLOCKWISE:
-            this.rotateFace(cubes, new Vector3(0, 1, 0));
+            this.rotateFace(cubes, new Vector3(0, 1, 0), repeat);
             break;
 
           case DIRECTION.COUNTERCLOCKWISE:
-            this.rotateFace(cubes, new Vector3(0, -1, 0));
+            this.rotateFace(cubes, new Vector3(0, -1, 0), repeat);
             break;
         }
         break;
@@ -101,11 +101,11 @@ export class Rubic {
         const cubes = this.getBottomFaceCube();
         switch (direction) {
           case DIRECTION.CLOCKWISE:
-            this.rotateFace(cubes, new Vector3(0, -1, 0));
+            this.rotateFace(cubes, new Vector3(0, -1, 0), repeat);
             break;
 
           case DIRECTION.COUNTERCLOCKWISE:
-            this.rotateFace(cubes, new Vector3(0, 1, 0));
+            this.rotateFace(cubes, new Vector3(0, 1, 0), repeat);
             break;
         }
         break;
@@ -115,11 +115,11 @@ export class Rubic {
         const cubes = this.getLeftFaceCube();
         switch (direction) {
           case DIRECTION.CLOCKWISE:
-            this.rotateFace(cubes, new Vector3(-1, 0, 0));
+            this.rotateFace(cubes, new Vector3(-1, 0, 0), repeat);
             break;
 
           case DIRECTION.COUNTERCLOCKWISE:
-            this.rotateFace(cubes, new Vector3(1, 0, 0));
+            this.rotateFace(cubes, new Vector3(1, 0, 0), repeat);
             break;
         }
         break;
@@ -129,11 +129,11 @@ export class Rubic {
         const cubes = this.getRightFaceCube();
         switch (direction) {
           case DIRECTION.CLOCKWISE:
-            this.rotateFace(cubes, new Vector3(1, 0, 0));
+            this.rotateFace(cubes, new Vector3(1, 0, 0), repeat);
             break;
 
           case DIRECTION.COUNTERCLOCKWISE:
-            this.rotateFace(cubes, new Vector3(-1, 0, 0));
+            this.rotateFace(cubes, new Vector3(-1, 0, 0), repeat);
             break;
         }
         break;
@@ -143,11 +143,11 @@ export class Rubic {
         const cubes = this.getFrontFaceCube();
         switch (direction) {
           case DIRECTION.CLOCKWISE:
-            this.rotateFace(cubes, new Vector3(0, 0, 1));
+            this.rotateFace(cubes, new Vector3(0, 0, 1), repeat);
             break;
 
           case DIRECTION.COUNTERCLOCKWISE:
-            this.rotateFace(cubes, new Vector3(0, 0, -1));
+            this.rotateFace(cubes, new Vector3(0, 0, -1), repeat);
             break;
         }
         break;
@@ -157,11 +157,11 @@ export class Rubic {
         const cubes = this.getBackFaceCube();
         switch (direction) {
           case DIRECTION.CLOCKWISE:
-            this.rotateFace(cubes, new Vector3(0, 0, -1));
+            this.rotateFace(cubes, new Vector3(0, 0, -1), repeat);
             break;
 
           case DIRECTION.COUNTERCLOCKWISE:
-            this.rotateFace(cubes, new Vector3(0, 0, 1));
+            this.rotateFace(cubes, new Vector3(0, 0, 1), repeat);
             break;
         }
         break;
@@ -171,7 +171,7 @@ export class Rubic {
     this.rotateCube(face, direction);
   }
 
-  rotateFace(cubes: Array<Cube>, axis: Vector3) {
+  rotateFace(cubes: Array<Cube>, axis: Vector3, repeat: number) {
     const self = this;
     const cb = self.onAnimate;
 
@@ -183,7 +183,7 @@ export class Rubic {
         group.add(mesh);
         group.add(line);
       });
-      group.rotateOnAxis(axis, MathUtils.degToRad(5));
+      group.rotateOnAxis(axis, MathUtils.degToRad(90 / repeat));
 
       // cleanup group
       cubes.forEach((cube) => {
@@ -209,7 +209,7 @@ export class Rubic {
 
     animateRepeat({
       act,
-      repeat: 18,
+      repeat,
       onAnimate: function () {
         cb();
       },
@@ -370,6 +370,24 @@ export class Rubic {
       }
     }
     return backFaceCube;
+  }
+
+  shuffle() {
+    for (let i = 0; i < 20; i++) {
+      const face = getRandomArrEl([
+        FACE.FRONT,
+        FACE.BACK,
+        FACE.TOP,
+        FACE.BOTTOM,
+        FACE.LEFT,
+        FACE.RIGHT,
+      ]);
+      const direction = getRandomArrEl([
+        DIRECTION.CLOCKWISE,
+        DIRECTION.COUNTERCLOCKWISE,
+      ]);
+      this.rotate(face, direction, 1);
+    }
   }
 
   render() {
