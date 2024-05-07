@@ -2,10 +2,11 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import { rubikGlowColor } from '@/feature/color';
-import { Controller } from '@/feature/controller';
+import { Controller } from '@/feature/controller/controller';
+import { MOVE } from '@/feature/controller/half-curve';
 import { activateRaycaster } from '@/feature/raycaster';
 import { Rubic, faceNormalToRubikFace } from '@/feature/rubic';
-import { DIRECTION, FACE } from '@/shared/enum';
+import { FACE } from '@/shared/enum';
 
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -60,8 +61,8 @@ function onIntersect(
   // BufferGeometry is the cube
   if (geometryType !== 'BufferGeometry') {
     const name = intersect.object.name;
-    const rotatorName = name.split('-').slice(1).join('-');
-    rotatorByName(rotatorName);
+    const move = name.split('-').slice(1).join('-') as MOVE;
+    rubic.rotateByMove(move);
     return;
   }
 
@@ -98,58 +99,6 @@ function onIntersect(
 activateRaycaster(scene, camera, { onIntersect, onNotIntersect });
 onAnimate();
 
-/**
- * @param {string} rotatorName // format: `${FACE}-C` | `${FACE}-CC`
- */
-function rotatorByName(rotatorName: string) {
-  switch (rotatorName) {
-    case `${FACE.TOP}-C`:
-      rubic.rotate(FACE.TOP, DIRECTION.CLOCKWISE);
-      break;
-    case `${FACE.TOP}-CC`:
-      rubic.rotate(FACE.TOP, DIRECTION.COUNTERCLOCKWISE);
-      break;
-
-    case `${FACE.BOTTOM}-C`:
-      rubic.rotate(FACE.BOTTOM, DIRECTION.CLOCKWISE);
-      break;
-    case `${FACE.BOTTOM}-CC`:
-      rubic.rotate(FACE.BOTTOM, DIRECTION.COUNTERCLOCKWISE);
-      break;
-
-    case `${FACE.LEFT}-C`:
-      rubic.rotate(FACE.LEFT, DIRECTION.CLOCKWISE);
-      break;
-    case `${FACE.LEFT}-CC`:
-      rubic.rotate(FACE.LEFT, DIRECTION.COUNTERCLOCKWISE);
-      break;
-
-    case `${FACE.RIGHT}-C`:
-      rubic.rotate(FACE.RIGHT, DIRECTION.CLOCKWISE);
-      break;
-    case `${FACE.RIGHT}-CC`:
-      rubic.rotate(FACE.RIGHT, DIRECTION.COUNTERCLOCKWISE);
-      break;
-
-    case `${FACE.FRONT}-C`:
-      rubic.rotate(FACE.FRONT, DIRECTION.CLOCKWISE);
-      break;
-    case `${FACE.FRONT}-CC`:
-      rubic.rotate(FACE.FRONT, DIRECTION.COUNTERCLOCKWISE);
-      break;
-
-    case `${FACE.BACK}-C`:
-      rubic.rotate(FACE.BACK, DIRECTION.CLOCKWISE);
-      break;
-    case `${FACE.BACK}-CC`:
-      rubic.rotate(FACE.BACK, DIRECTION.COUNTERCLOCKWISE);
-      break;
-
-    default:
-      break;
-  }
-}
-
 const main = document.querySelector('main') as HTMLElement;
 const container = document.createElement('div');
 container.className = 'control-container';
@@ -170,9 +119,13 @@ function createController(
   container.appendChild(buttonEl);
 }
 
-createController('Shuffle', (_event) => rubic.shuffle(), ['color-red']);
+createController('Shuffle', async (_event) => await rubic.shuffle(), [
+  'color-red',
+]);
 
-// createController('Solve', (_event) => rubic.solve(), ['color-green']);
+createController('Solve', async (_event) => await rubic.solve(), [
+  'color-green',
+]);
 
 // createController('Solve by AI', () => {}, ['color-blue']);
 

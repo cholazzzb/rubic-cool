@@ -1,5 +1,22 @@
 import * as THREE from 'three';
 
+import { FACE } from '@/shared/enum';
+
+export enum MOVE {
+  TOP_C = `${FACE.TOP}-C`,
+  TOP_CC = `${FACE.TOP}-CC`,
+  BOTTOM_C = `${FACE.BOTTOM}-C`,
+  BOTTOM_CC = `${FACE.BOTTOM}-CC`,
+  LEFT_C = `${FACE.LEFT}-C`,
+  LEFT_CC = `${FACE.LEFT}-CC`,
+  RIGHT_C = `${FACE.RIGHT}-C`,
+  RIGHT_CC = `${FACE.RIGHT}-CC`,
+  FRONT_C = `${FACE.FRONT}-C`,
+  FRONT_CC = `${FACE.FRONT}-CC`,
+  BACK_C = `${FACE.BACK}-C`,
+  BACK_CC = `${FACE.BACK}-CC`,
+}
+
 export class HalfCurve extends THREE.Group {
   private arrow: THREE.Mesh;
   private cone: THREE.Mesh;
@@ -13,7 +30,7 @@ export class HalfCurve extends THREE.Group {
   ];
 
   constructor(
-    name: string,
+    name: MOVE,
     translate?: THREE.Vector3,
     rotationAxis?: THREE.Vector3,
   ) {

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { FACE } from '@/shared/enum';
-import { HalfCurve } from './shape/half-curve';
+import { HalfCurve, MOVE } from './half-curve';
 
 export class Controller extends THREE.Group {
   private topRotator: THREE.Group;
@@ -15,12 +15,10 @@ export class Controller extends THREE.Group {
     super();
 
     this.topRotator = new THREE.Group()
-      .add(
-        new HalfCurve(`${FACE.TOP}-CC`, new THREE.Vector3(-0.155, 0.055, 0.18)),
-      )
+      .add(new HalfCurve(MOVE.TOP_CC, new THREE.Vector3(-0.155, 0.055, 0.18)))
       .add(
         new HalfCurve(
-          `${FACE.TOP}-C`,
+          MOVE.TOP_C,
           new THREE.Vector3(-0.155, 0.055, 0.18),
           new THREE.Vector3(0, 0, 1),
         ).mirrorX(),
@@ -28,73 +26,50 @@ export class Controller extends THREE.Group {
       .rotateOnAxis(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
     this.bottomRotator = new THREE.Group()
       .add(
-        new HalfCurve(
-          `${FACE.BOTTOM}-CC`,
-          new THREE.Vector3(-0.155, 0.055, 0.18),
-        ),
+        new HalfCurve(MOVE.BOTTOM_CC, new THREE.Vector3(-0.155, 0.055, 0.18)),
       )
       .add(
         new HalfCurve(
-          `${FACE.BOTTOM}-C`,
+          MOVE.BOTTOM_C,
           new THREE.Vector3(-0.155, 0.055, 0.18),
           new THREE.Vector3(0, 0, 1),
         ).mirrorX(),
       )
       .rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
     this.leftRotator = new THREE.Group()
+      .add(new HalfCurve(MOVE.LEFT_CC, new THREE.Vector3(-0.155, 0.055, 0.18)))
       .add(
         new HalfCurve(
-          `${FACE.LEFT}-CC`,
-          new THREE.Vector3(-0.155, 0.055, 0.18),
-        ),
-      )
-      .add(
-        new HalfCurve(
-          `${FACE.LEFT}-C`,
+          MOVE.LEFT_C,
           new THREE.Vector3(-0.155, 0.055, 0.18),
           new THREE.Vector3(0, 0, 1),
         ).mirrorX(),
       )
       .rotateOnAxis(new THREE.Vector3(0, -1, 0), Math.PI / 2);
     this.rightRotator = new THREE.Group()
+      .add(new HalfCurve(MOVE.RIGHT_CC, new THREE.Vector3(-0.155, 0.055, 0.18)))
       .add(
         new HalfCurve(
-          `${FACE.RIGHT}-CC`,
-          new THREE.Vector3(-0.155, 0.055, 0.18),
-        ),
-      )
-      .add(
-        new HalfCurve(
-          `${FACE.RIGHT}-C`,
+          MOVE.RIGHT_C,
           new THREE.Vector3(-0.155, 0.055, 0.18),
           new THREE.Vector3(0, 0, 1),
         ).mirrorX(),
       )
       .rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
     this.frontRotator = new THREE.Group()
+      .add(new HalfCurve(MOVE.FRONT_CC, new THREE.Vector3(-0.155, 0.055, 0.18)))
       .add(
         new HalfCurve(
-          `${FACE.FRONT}-CC`,
-          new THREE.Vector3(-0.155, 0.055, 0.18),
-        ),
-      )
-      .add(
-        new HalfCurve(
-          `${FACE.FRONT}-C`,
+          MOVE.FRONT_C,
           new THREE.Vector3(-0.155, 0.055, 0.18),
           new THREE.Vector3(0, 0, 1),
         ).mirrorX(),
       );
     this.backRotator = new THREE.Group()
+      .add(new HalfCurve(MOVE.BACK_C, new THREE.Vector3(-0.155, 0.055, -0.18)))
       .add(
         new HalfCurve(
-          `${FACE.BACK}-C`,
-          new THREE.Vector3(-0.155, 0.055, -0.18),
-        ),
-      )
-      .add(
-        new HalfCurve(
-          `${FACE.BACK}-CC`,
+          MOVE.BACK_CC,
           new THREE.Vector3(-0.155, 0.055, -0.18),
           new THREE.Vector3(0, 0, 1),
         ).mirrorX(),

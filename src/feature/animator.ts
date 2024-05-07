@@ -21,3 +21,9 @@ export function animateRepeat(arg: {
 
   act();
 }
+
+export async function waitAnimation() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+}
