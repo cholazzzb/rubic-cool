@@ -130,6 +130,7 @@ export class Rubic {
       default:
         break;
     }
+    await new Promise((res) => setTimeout(res, 300));
   }
 
   async rotate(face: FACE, direction: DIRECTION, repeat = 18) {

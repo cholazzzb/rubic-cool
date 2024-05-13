@@ -6,7 +6,17 @@ import {
   Mesh,
   MeshBasicMaterial,
 } from 'three';
+
 import { rubikInitColor } from './color';
+
+type XPos = 0 | 1 | 2;
+type YPos = 0 | 1 | 2;
+type ZPos = 0 | 1 | 2;
+export type Position = [XPos, YPos, ZPos];
+/**
+ * @description format is from coordinate: x-y-z
+ */
+export type CubeName = `${Position[0]}-${Position[1]}-${Position[2]}`;
 
 export class Cube {
   private geometry: THREE.BufferGeometry;
@@ -53,35 +63,3 @@ export class Cube {
     return this.name;
   }
 }
-
-/**
- * @description format is from coordinate: x-y-z
- */
-export type CubeName =
-  | '0-0-0'
-  | '0-0-1'
-  | '0-0-2'
-  | '0-1-0'
-  | '0-1-1'
-  | '0-1-2'
-  | '0-2-0'
-  | '0-2-1'
-  | '0-2-2'
-  | '1-0-0'
-  | '1-0-1'
-  | '1-0-2'
-  | '1-1-0'
-  | '1-1-1'
-  | '1-1-2'
-  | '1-2-0'
-  | '1-2-1'
-  | '1-2-2'
-  | '2-0-0'
-  | '2-0-1'
-  | '2-0-2'
-  | '2-1-0'
-  | '2-1-1'
-  | '2-1-2'
-  | '2-2-0'
-  | '2-2-1'
-  | '2-2-2';
