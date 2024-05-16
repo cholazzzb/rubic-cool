@@ -164,8 +164,8 @@ export function movesWhenCurrentOnTop(
 }
 
 export function movesWhenCurrentOnBottom(
-  cubeFace: FACE,
-  position: Position,
+  _cubeFace: FACE,
+  _position: Position,
   targetName: CubeName,
 ): Array<MOVE> {
   // see face and rotate according to the face and make it to top facing side
@@ -183,5 +183,9 @@ function toTopMoves(): {
   moves: Array<MOVE>;
   cubeFace: FACE;
 } {
-  return {};
+  return {
+    position: [0, 1, 2] as Position,
+    moves: [] as Array<MOVE>,
+    cubeFace: FACE.TOP,
+  };
 }
