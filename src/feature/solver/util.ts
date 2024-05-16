@@ -1,8 +1,7 @@
 import { Euler, Quaternion, Vector3 } from 'three';
 import { radToDeg } from 'three/src/math/MathUtils';
 
-import { FACE } from '@/shared/enum';
-import { MOVE } from '../controller/half-curve';
+import { FACE, MOVE } from '@/shared/enum';
 import { Cube, CubeName, Position } from '../cube';
 
 export type Cubes = Array<Array<Array<Cube>>>;

@@ -2,10 +2,10 @@ import { Euler, Group, MathUtils, Quaternion, Vector3 } from 'three';
 
 import { Cube, CubeName } from '@/feature/cube';
 import { flattenArray, getRandomArrEl } from '@/shared/array';
-import { DIRECTION, FACE, MOVE } from '@/shared/enum';
-import { animate, animateRepeat, waitAnimation } from './animator';
+import { DIRECTION, FACE } from '@/shared/enum';
+import { animate, animateRepeat } from './animator';
 import { rubikInitColor } from './color';
-import { solver } from './solver/solver';
+import { solver } from './solver';
 
 /**
  * @description
@@ -82,57 +82,7 @@ export class Rubic {
     this.cubes = cubes;
   }
 
-  async rotateByMove(move: MOVE) {
-    switch (move) {
-      case MOVE.TOP_C:
-        await this.rotate(FACE.TOP, DIRECTION.CLOCKWISE);
-        break;
-      case MOVE.TOP_CC:
-        await this.rotate(FACE.TOP, DIRECTION.COUNTERCLOCKWISE);
-        break;
-
-      case MOVE.BOTTOM_C:
-        await this.rotate(FACE.BOTTOM, DIRECTION.CLOCKWISE);
-        break;
-      case MOVE.BOTTOM_CC:
-        await this.rotate(FACE.BOTTOM, DIRECTION.COUNTERCLOCKWISE);
-        break;
-
-      case MOVE.LEFT_C:
-        await this.rotate(FACE.LEFT, DIRECTION.CLOCKWISE);
-        break;
-      case MOVE.LEFT_CC:
-        await this.rotate(FACE.LEFT, DIRECTION.COUNTERCLOCKWISE);
-        break;
-
-      case MOVE.RIGHT_C:
-        await this.rotate(FACE.RIGHT, DIRECTION.CLOCKWISE);
-        break;
-      case MOVE.RIGHT_CC:
-        await this.rotate(FACE.RIGHT, DIRECTION.COUNTERCLOCKWISE);
-        break;
-
-      case MOVE.FRONT_C:
-        await this.rotate(FACE.FRONT, DIRECTION.CLOCKWISE);
-        break;
-      case MOVE.FRONT_CC:
-        await this.rotate(FACE.FRONT, DIRECTION.COUNTERCLOCKWISE);
-        break;
-
-      case MOVE.BACK_C:
-        await this.rotate(FACE.BACK, DIRECTION.CLOCKWISE);
-        break;
-      case MOVE.BACK_CC:
-        await this.rotate(FACE.BACK, DIRECTION.COUNTERCLOCKWISE);
-        break;
-
-      default:
-        break;
-    }
-    await new Promise((res) => setTimeout(res, 300));
-  }
-
-  async rotate(face: FACE, direction: DIRECTION, repeat = 18) {
+  rotate(face: FACE, direction: DIRECTION, repeat = 18) {
     switch (face) {
       case FACE.TOP: {
         const cubes = this.getTopFaceCube();
@@ -219,7 +169,6 @@ export class Rubic {
       }
     }
 
-    await waitAnimation();
     this.rotateCube(face, direction);
   }
 
@@ -424,7 +373,7 @@ export class Rubic {
     return backFaceCube;
   }
 
-  async shuffle() {
+  shuffle() {
     for (let i = 0; i < 20; i++) {
       const face = getRandomArrEl([
         FACE.FRONT,
@@ -438,15 +387,12 @@ export class Rubic {
         DIRECTION.CLOCKWISE,
         DIRECTION.COUNTERCLOCKWISE,
       ]);
-      await this.rotate(face, direction, 1);
+      this.rotate(face, direction, 1);
     }
   }
 
-  async solve() {
-    await solver(
-      () => this.getCubes(),
-      (move: MOVE) => this.rotateByMove(move),
-    ).solve();
+  solve() {
+    solver(this.getCubes, this.rotate).solve();
   }
 
   render() {
