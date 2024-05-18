@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      .husky:
-        specifier: link:.husky
-        version: link:.husky
       three:
         specifier: ^0.141.0
         version: 0.141.0
