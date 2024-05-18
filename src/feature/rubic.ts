@@ -2,10 +2,9 @@ import { Euler, Group, MathUtils, Quaternion, Vector3 } from 'three';
 
 import { Cube, CubeName } from '@/feature/cube';
 import { flattenArray, getRandomArrEl } from '@/shared/array';
-import { DIRECTION, FACE } from '@/shared/enum';
+import { DIRECTION, FACE, MOVE } from '@/shared/enum';
 import { animate, animateRepeat, waitAnimation } from './animator';
 import { rubikInitColor } from './color';
-import { MOVE } from './controller/half-curve';
 import { solver } from './solver/solver';
 
 /**

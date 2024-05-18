@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-import { FACE } from '@/shared/enum';
-import { HalfCurve, MOVE } from './half-curve';
+import { FACE, MOVE } from '@/shared/enum';
+import { HalfCurve } from './half-curve';
 
 export class Controller extends THREE.Group {
   private topRotator: THREE.Group;

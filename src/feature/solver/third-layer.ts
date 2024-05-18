@@ -1,4 +1,4 @@
-import { MOVE } from '../controller/half-curve';
+import { MOVE } from '@/shared/enum';
 import { LayerSolver } from './interface';
 
 export class ThirdLayerSolver implements LayerSolver {
@@ -6,7 +6,7 @@ export class ThirdLayerSolver implements LayerSolver {
     return true;
   }
 
-  findSolution(): MOVE[] {
+  findSolution(): Array<MOVE> {
     return [];
   }
 }

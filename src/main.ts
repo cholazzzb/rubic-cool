@@ -3,10 +3,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import { rubikGlowColor } from '@/feature/color';
 import { Controller } from '@/feature/controller/controller';
-import { MOVE } from '@/feature/controller/half-curve';
 import { activateRaycaster } from '@/feature/raycaster';
 import { Rubic, faceNormalToRubikFace } from '@/feature/rubic';
-import { FACE } from '@/shared/enum';
+import { FACE, MOVE } from '@/shared/enum';
 
 const camera = new THREE.PerspectiveCamera(
   75,

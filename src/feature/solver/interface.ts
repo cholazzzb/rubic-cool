@@ -1,4 +1,4 @@
-import { MOVE } from '../controller/half-curve';
+import { MOVE } from '@/shared/enum';
 
 export interface LayerSolver {
   isSolved(): boolean;

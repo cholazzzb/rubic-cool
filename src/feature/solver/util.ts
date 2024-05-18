@@ -1,8 +1,7 @@
 import { Euler, Quaternion, Vector3 } from 'three';
 import { radToDeg } from 'three/src/math/MathUtils';
 
-import { FACE } from '@/shared/enum';
-import { MOVE } from '../controller/half-curve';
+import { FACE, MOVE } from '@/shared/enum';
 import { Cube, CubeName, Position } from '../cube';
 
 export type Cubes = Array<Array<Array<Cube>>>;
@@ -27,13 +26,17 @@ export function getCubePosition(
   throw Error('panic: cannot getCubePosition');
 }
 
-export function isCubeOnTarget(targetName: CubeName, cube: Cube): boolean {
-  if (targetName !== cube.getName()) return false;
+export function isCubeNotRotated(cube: Cube): boolean {
   if (Math.round(radToDeg(cube.getMesh().rotation.x)) !== 0) return false;
   if (Math.round(radToDeg(cube.getMesh().rotation.y)) !== 0) return false;
   if (Math.round(radToDeg(cube.getMesh().rotation.z)) !== 0) return false;
 
   return true;
+}
+
+export function isCubeOnTarget(targetName: CubeName, cube: Cube): boolean {
+  if (targetName !== cube.getName()) return false;
+  return isCubeNotRotated(cube);
 }
 
 export function getCubeNotOnTarget(
@@ -82,6 +85,26 @@ export function vectorToFace(vector: Vector3): FACE {
       throw Error(
         `Vector cannot convert to rubik's face: ${vector.x}:${vector.y}:${vector.z}`,
       );
+  }
+}
+
+export function faceToVector(face: FACE): Vector3 {
+  switch (face) {
+    case FACE.TOP:
+      return new Vector3(0, 1, 0);
+    case FACE.BOTTOM:
+      return new Vector3(0, -1, 0);
+    case FACE.FRONT:
+      return new Vector3(0, 0, 1);
+    case FACE.BACK:
+      return new Vector3(0, 0, -1);
+    case FACE.RIGHT:
+      return new Vector3(1, 0, 0);
+    case FACE.LEFT:
+      return new Vector3(-1, 0, 0);
+
+    default:
+      throw Error('Face cannot convert to vector');
   }
 }
 

@@ -1,5 +1,5 @@
+import { MOVE } from '@/shared/enum';
 import { waitAnimation } from '../animator';
-import { MOVE } from '../controller/half-curve';
 import { FirstLayerSolver } from './first-layer';
 import { SecondLayerSolver } from './second-layer';
 import { ThirdLayerSolver } from './third-layer';
@@ -12,7 +12,7 @@ export function solver(
   const queue: Array<MOVE> = [];
 
   const firstLayer = new FirstLayerSolver(getCubes);
-  const secondLayer = new SecondLayerSolver();
+  const secondLayer = new SecondLayerSolver(getCubes);
   const thirdLayer = new ThirdLayerSolver();
 
   function searchMove() {
