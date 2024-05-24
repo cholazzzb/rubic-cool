@@ -39,14 +39,14 @@ import { solver } from './solver/solver';
 export class Rubic {
   private static size = 0.1;
   private static halfSize = Rubic.size / 2;
-  private static edgeChain: Array<[number, number]> = [
+  static edgeChain: Array<[number, number]> = [
     [0, 0], // O <---- O
     [0, 2], // |       ^
     [2, 2], // |       |
     [2, 0], // v       |
     [0, 0], // O ----> O
   ];
-  private static cornerChain = [
+  static cornerChain = [
     [0, 1], //   _ O
     [1, 2], //   / | \ /
     [2, 1], // O -    - O

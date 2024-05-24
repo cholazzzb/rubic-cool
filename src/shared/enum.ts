@@ -26,3 +26,18 @@ export enum MOVE {
   BACK_C = `${FACE.BACK}-C`,
   BACK_CC = `${FACE.BACK}-CC`,
 }
+
+export function extractMove(move: MOVE) {
+  const [face_raw, dir_raw] = move.split('-');
+
+  const face = face_raw as FACE;
+  const dir =
+    dir_raw === 'C' ? DIRECTION.CLOCKWISE : DIRECTION.COUNTERCLOCKWISE;
+
+  return { face, dir };
+}
+
+export function makeMove(face: FACE, direction: DIRECTION) {
+  const dir = direction === DIRECTION.CLOCKWISE ? 'C' : 'CC';
+  return `${face}-${dir}` as MOVE;
+}

@@ -1,6 +1,11 @@
 import { MOVE } from '@/shared/enum';
 import { LayerSolver } from './interface';
-import { Cubes } from './util';
+import {
+  findMoves,
+  findPositionAndTarget,
+  findSwapMoves,
+} from './second-layer/finder';
+import { Cubes, isCubeOnTarget } from './util';
 
 export class SecondLayerSolver implements LayerSolver {
   private getCubes: () => Cubes;
@@ -10,11 +15,40 @@ export class SecondLayerSolver implements LayerSolver {
   }
 
   isSolved(): boolean {
+    const cubes = this.getCubes();
+
+    if (!isCubeOnTarget('0-1-0', cubes[0][1][0])) {
+      return false;
+    }
+    if (!isCubeOnTarget('2-1-0', cubes[2][1][0])) {
+      return false;
+    }
+    if (!isCubeOnTarget('0-1-2', cubes[0][1][2])) {
+      return false;
+    }
+    if (!isCubeOnTarget('2-1-0', cubes[2][1][2])) {
+      return false;
+    }
+
     return true;
   }
 
   findSolution(): Array<MOVE> {
-    this.getCubes;
-    return [];
+    const cubes = this.getCubes();
+
+    const result = findPositionAndTarget(cubes);
+    if (result === null) return [];
+
+    const [x, y, z] = result.position;
+    const rotation = cubes[x][y][z].getMesh().rotation;
+    // swap rotation
+    if (result.isSwap) {
+      return findSwapMoves(result.position, result.target, cubes);
+    }
+    if (result.position[1] === 2) {
+      return findMoves(rotation, result.position, result.target);
+    }
+    // swap position
+    return findSwapMoves(result.position, result.target, cubes);
   }
 }

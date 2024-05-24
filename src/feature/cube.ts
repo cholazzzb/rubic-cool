@@ -18,6 +18,14 @@ export type Position = [XPos, YPos, ZPos];
  */
 export type CubeName = `${Position[0]}-${Position[1]}-${Position[2]}`;
 
+export function positionToCubeName(position: Position): CubeName {
+  return `${position[0]}-${position[1]}-${position[2]}`;
+}
+
+export function cubeNameToPosition(cubeName: CubeName): Position {
+  return cubeName.split('-').map((cn) => Number(cn)) as Position;
+}
+
 export class Cube {
   private geometry: THREE.BufferGeometry;
   private mesh: THREE.Mesh;
