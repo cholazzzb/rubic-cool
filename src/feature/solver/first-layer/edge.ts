@@ -1,4 +1,4 @@
-import { CubeName, Position } from '@/feature/cube';
+import { CubeName, Position, cubeNameToPosition } from '@/feature/cube';
 import { shuffleArray } from '@/shared/array';
 import { FACE, MOVE } from '@/shared/enum';
 import { alignTopBottomFace } from '../util';
@@ -55,7 +55,9 @@ export function movesWhenCurrentOnTop(
         return [...moves, MOVE.RIGHT_C, MOVE.RIGHT_C];
 
       default:
-        throw Error('OOPPS');
+        throw Error(
+          `first layer movesWhenCurrentOnTop: cubeFace:${cubeFace} position:${position} targetName:${targetName} alignEdges:${alignEdges} moves:${moves}`,
+        );
     }
   }
   switch (cubeFace) {
@@ -77,10 +79,9 @@ export function movesWhenCurrentOnTop(
     }
   }
 
-  const targetPosition = targetName
-    .split('-')
-    .map((val) => Number(val)) as Position;
+  const targetPosition = cubeNameToPosition(targetName);
   targetPosition[1] = 2;
+
   const {
     moves: alignMoves,
     position: alignPosition,
@@ -92,7 +93,7 @@ export function movesWhenCurrentOnTop(
     alignPosition,
     targetName,
     alignEdges,
-    alignMoves,
+    [...moves, ...alignMoves],
   );
 }
 
@@ -116,10 +117,7 @@ export function movesWhenCurrentOnMiddle(
             FACE.BOTTOM,
           );
 
-          const reversedMoves = moves.reduce((acc, mv) => {
-            acc.unshift(mv);
-            return acc;
-          }, [] as Array<MOVE>);
+          const reversedMoves = reverseBottomMoves(moves);
 
           return [...reversedMoves, MOVE.LEFT_CC, ...moves];
         }
@@ -130,10 +128,7 @@ export function movesWhenCurrentOnMiddle(
             FACE.BOTTOM,
           );
 
-          const reversedMoves = moves.reduce((acc, mv) => {
-            acc.unshift(mv);
-            return acc;
-          }, [] as Array<MOVE>);
+          const reversedMoves = reverseBottomMoves(moves);
 
           return [...reversedMoves, MOVE.RIGHT_C, ...moves];
         }
@@ -152,10 +147,7 @@ export function movesWhenCurrentOnMiddle(
             FACE.BOTTOM,
           );
 
-          const reversedMoves = moves.reduce((acc, mv) => {
-            acc.unshift(mv);
-            return acc;
-          }, [] as Array<MOVE>);
+          const reversedMoves = reverseBottomMoves(moves);
 
           return [...reversedMoves, MOVE.LEFT_C, ...moves];
         }
@@ -166,10 +158,7 @@ export function movesWhenCurrentOnMiddle(
             FACE.BOTTOM,
           );
 
-          const reversedMoves = moves.reduce((acc, mv) => {
-            acc.unshift(mv);
-            return acc;
-          }, [] as Array<MOVE>);
+          const reversedMoves = reverseBottomMoves(moves);
 
           return [...reversedMoves, MOVE.RIGHT_CC, ...moves];
         }
@@ -188,10 +177,7 @@ export function movesWhenCurrentOnMiddle(
             FACE.BOTTOM,
           );
 
-          const reversedMoves = moves.reduce((acc, mv) => {
-            acc.unshift(mv);
-            return acc;
-          }, [] as Array<MOVE>);
+          const reversedMoves = reverseBottomMoves(moves);
 
           return [...reversedMoves, MOVE.BACK_CC, ...moves];
         }
@@ -202,10 +188,7 @@ export function movesWhenCurrentOnMiddle(
             FACE.BOTTOM,
           );
 
-          const reversedMoves = moves.reduce((acc, mv) => {
-            acc.unshift(mv);
-            return acc;
-          }, [] as Array<MOVE>);
+          const reversedMoves = reverseBottomMoves(moves);
 
           return [...reversedMoves, MOVE.FRONT_C, ...moves];
         }
@@ -224,10 +207,7 @@ export function movesWhenCurrentOnMiddle(
             FACE.BOTTOM,
           );
 
-          const reversedMoves = moves.reduce((acc, mv) => {
-            acc.unshift(mv);
-            return acc;
-          }, [] as Array<MOVE>);
+          const reversedMoves = reverseBottomMoves(moves);
 
           return [...reversedMoves, MOVE.BACK_C, ...moves];
         }
@@ -238,10 +218,7 @@ export function movesWhenCurrentOnMiddle(
             FACE.BOTTOM,
           );
 
-          const reversedMoves = moves.reduce((acc, mv) => {
-            acc.unshift(mv);
-            return acc;
-          }, [] as Array<MOVE>);
+          const reversedMoves = reverseBottomMoves(moves);
 
           return [...reversedMoves, MOVE.FRONT_CC, ...moves];
         }
@@ -305,10 +282,14 @@ export function movesWhenCurrentOnBottom(
     FACE.BOTTOM,
   );
 
-  const reversedMoves = moves.reduce((acc, mv) => {
-    acc.unshift(mv);
-    return acc;
-  }, [] as Array<MOVE>);
+  const reversedMoves = reverseBottomMoves(moves);
 
   return [...safeMoves, ...reversedMoves, ...safeMoves, ...moves];
+}
+
+function reverseBottomMoves(moves: Array<MOVE>) {
+  return moves.map((mv) => {
+    if (mv === MOVE.BOTTOM_C) return MOVE.BOTTOM_CC;
+    return MOVE.BOTTOM_C;
+  }, [] as Array<MOVE>);
 }

@@ -1,18 +1,20 @@
 import * as THREE from 'three';
 
 import { FACE, MOVE } from '@/shared/enum';
-import { Cube, CubeName, Position } from '../cube';
+import { Cube, CubeName, Position, cubeNameToPosition } from '../cube';
+import * as Corner from './first-layer/corner';
+import * as Edge from './first-layer/edge';
 import { LayerSolver } from './interface';
+import { Snapshot } from './snapshot';
 import {
   Cubes,
   getCubeNotOnTarget,
+  isCubeOnTarget,
   vectorAfterRotation,
   vectorToFace,
 } from './util';
-import * as Edge from './first-layer/edge';
-import * as Corner from './first-layer/corner';
 
-export class FirstLayerSolver implements LayerSolver {
+export class FirstLayerSolver extends Snapshot implements LayerSolver {
   private getCubes: () => Cubes;
   private cubes: Cubes;
   private edgeNotOnTarget: { targetName: CubeName; position: Position } | null =
@@ -22,16 +24,27 @@ export class FirstLayerSolver implements LayerSolver {
     position: Position;
   } | null = null;
 
+  // memoization
+  private solved = false;
+
   constructor(getCubes: () => Cubes) {
+    super();
     this.cubes = getCubes();
     this.getCubes = getCubes;
   }
 
   isSolved(): boolean {
+    if (this.solved) return true;
     this.cubes = this.getCubes();
+    this.checkInfiniteLoop(this.cubes);
+
     this.edgeNotOnTarget = getCubeNotOnTarget(this.cubes, Edge.randomFle());
     this.cornerNotOnTarget = getCubeNotOnTarget(this.cubes, Corner.randomFlc());
-    return this.edgeNotOnTarget === null && this.cornerNotOnTarget === null;
+    const solved =
+      this.edgeNotOnTarget === null && this.cornerNotOnTarget === null;
+    this.solved = solved;
+
+    return solved;
   }
 
   findSolution(): Array<MOVE> {
@@ -67,11 +80,11 @@ export class FirstLayerSolver implements LayerSolver {
     const cubes = this.getCubes();
 
     for (const name of Edge.randomFle()) {
-      const [xPos, yPos, zPos] = name.split('-').map((nm) => Number(nm));
-      const cube = cubes[Number(xPos)][Number(yPos)][Number(zPos)];
+      const [xPos, yPos, zPos] = cubeNameToPosition(name);
+      const cube = cubes[xPos][yPos][zPos];
       const cubeFace = this.getCubeFace(cube.getMesh().rotation);
 
-      if (cubeFace === FACE.BOTTOM) {
+      if (cubeFace === FACE.BOTTOM && isCubeOnTarget(name, cube)) {
         switch (name) {
           case '1-0-0':
             alignEdges.add(FACE.BACK);

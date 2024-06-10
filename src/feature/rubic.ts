@@ -2,7 +2,7 @@ import { Euler, Group, MathUtils, Quaternion, Vector3 } from 'three';
 
 import { Cube, CubeName } from '@/feature/cube';
 import { flattenArray, getRandomArrEl } from '@/shared/array';
-import { DIRECTION, FACE, MOVE } from '@/shared/enum';
+import { DIRECTION, FACE, MOVE, makeMove } from '@/shared/enum';
 import { animate, animateRepeat, waitAnimation } from './animator';
 import { rubikInitColor } from './color';
 import { solver } from './solver/solver';
@@ -425,6 +425,7 @@ export class Rubic {
   }
 
   async shuffle() {
+    const moves: Array<MOVE> = [];
     for (let i = 0; i < 20; i++) {
       const face = getRandomArrEl([
         FACE.FRONT,
@@ -438,15 +439,41 @@ export class Rubic {
         DIRECTION.CLOCKWISE,
         DIRECTION.COUNTERCLOCKWISE,
       ]);
+      moves.push(makeMove(face, direction));
       await this.rotate(face, direction, 1);
     }
+    return moves;
   }
 
   async solve() {
     await solver(
       () => this.getCubes(),
-      (move: MOVE) => this.rotateByMove(move),
+      async (move: MOVE) => {
+        await this.rotateByMove(move);
+      },
     ).solve();
+  }
+
+  async debug() {
+    const errs = [];
+    for (let trial = 0; trial < 100; trial++) {
+      let moves: Array<MOVE> = [];
+      try {
+        // eslint-disable-next-line no-console
+        console.log({ trial });
+        moves = await this.shuffle();
+        await this.solve();
+      } catch (error) {
+        errs.push(error);
+
+        // eslint-disable-next-line no-console
+        console.log({ error });
+        // eslint-disable-next-line no-console
+        console.log({ moves });
+      }
+    }
+    // eslint-disable-next-line no-console
+    console.log({ errs });
   }
 
   render() {

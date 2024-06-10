@@ -11,6 +11,16 @@ export function flattenArray<T>(arr: T): FlattenArray<T> {
   }
 }
 
+export function chunk<T>(arr: Array<T>, chunkSize: number): Array<Array<T>> {
+  const out: Array<Array<T>> = [];
+
+  for (let curSz = 0; curSz < arr.length; curSz += chunkSize) {
+    out.push(arr.slice(curSz, curSz + chunkSize));
+  }
+
+  return out;
+}
+
 export function getRandomArrEl<T>(arr: Array<T>): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }

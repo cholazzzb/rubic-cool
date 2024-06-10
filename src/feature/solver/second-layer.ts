@@ -1,4 +1,5 @@
 import { MOVE } from '@/shared/enum';
+import { TopLayerPosition } from '../cube';
 import { LayerSolver } from './interface';
 import {
   findMoves,
@@ -26,7 +27,7 @@ export class SecondLayerSolver implements LayerSolver {
     if (!isCubeOnTarget('0-1-2', cubes[0][1][2])) {
       return false;
     }
-    if (!isCubeOnTarget('2-1-0', cubes[2][1][2])) {
+    if (!isCubeOnTarget('2-1-2', cubes[2][1][2])) {
       return false;
     }
 
@@ -43,12 +44,16 @@ export class SecondLayerSolver implements LayerSolver {
     const rotation = cubes[x][y][z].getMesh().rotation;
     // swap rotation
     if (result.isSwap) {
-      return findSwapMoves(result.position, result.target, cubes);
+      return findSwapMoves(result.position, cubes);
     }
     if (result.position[1] === 2) {
-      return findMoves(rotation, result.position, result.target);
+      return findMoves(
+        rotation,
+        result.position as TopLayerPosition,
+        result.target,
+      );
     }
     // swap position
-    return findSwapMoves(result.position, result.target, cubes);
+    return findSwapMoves(result.position, cubes);
   }
 }

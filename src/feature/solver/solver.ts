@@ -13,7 +13,7 @@ export function solver(
 
   const firstLayer = new FirstLayerSolver(getCubes);
   const secondLayer = new SecondLayerSolver(getCubes);
-  const thirdLayer = new ThirdLayerSolver();
+  const thirdLayer = new ThirdLayerSolver(getCubes);
 
   function searchMove() {
     if (!firstLayer.isSolved()) {

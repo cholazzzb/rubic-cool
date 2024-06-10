@@ -1,6 +1,9 @@
 import { Euler, Quaternion, Vector3 } from 'three';
 
-import { Position, positionToCubeName } from '@/feature/cube';
+import { Position, TopLayerPosition, positionToCubeName } from '@/feature/cube';
+import { Rubic } from '@/feature/rubic';
+import { chunk, flattenArray } from '@/shared/array';
+import { rotationToString } from '@/shared/debug';
 import { MOVE } from '@/shared/enum';
 import { Cubes, isCubeNotRotated, vectorAfterRotation } from '../util';
 import {
@@ -13,7 +16,6 @@ import {
   rightLeft,
   rightRight,
 } from './matching-algorithm';
-import { Rubic } from '@/feature/rubic';
 
 export const secondLayerTargets = ['0-1-0', '2-1-0', '0-1-2', '2-1-2'] as const;
 export type SecondLayerTarget = (typeof secondLayerTargets)[number];
@@ -24,7 +26,7 @@ type PositionAndTarget = {
   isSwap: boolean;
 };
 export function findPositionAndTarget(cubes: Cubes): PositionAndTarget | null {
-  let swap: PositionAndTarget | false = false;
+  const stack: Array<PositionAndTarget> = [];
   for (const targetName of secondLayerTargets) {
     const targetPosition = targetName
       .split('-')
@@ -34,20 +36,28 @@ export function findPositionAndTarget(cubes: Cubes): PositionAndTarget | null {
     const cubeName = cube.getName();
     if (cubeName !== targetName) {
       const position = findPosition(cubes, targetName);
-      return {
-        position,
-        target: targetPosition,
-        isSwap: false,
-      };
+      if (position[1] === 1) {
+        stack.push({
+          position,
+          target: targetPosition,
+          isSwap: false,
+        });
+      } else {
+        return {
+          position,
+          target: targetPosition,
+          isSwap: false,
+        };
+      }
     } else if (!isCubeNotRotated(cube)) {
-      swap = {
+      stack.push({
         position: [x, y, z] as Position,
         target: [x, y, z] as Position,
         isSwap: true,
-      };
+      });
     }
   }
-  if (swap) return swap;
+  if (stack.length > 0) return stack[stack.length - 1];
   return null;
 }
 
@@ -68,7 +78,7 @@ function findPosition(cubes: Cubes, targetName: SecondLayerTarget): Position {
 
 export function findMoves(
   rotation: THREE.Euler,
-  position: Position,
+  position: TopLayerPosition,
   target: Position,
 ): Array<MOVE> {
   for (
@@ -76,7 +86,7 @@ export function findMoves(
       simulatePosition = position,
       simulateRotation = rotation,
       match = matcher(simulatePosition, target, simulateRotation);
-    numOfRotation < 4;
+    numOfRotation <= 4;
     numOfRotation++
   ) {
     if (match.isMatch) {
@@ -93,15 +103,15 @@ export function findMoves(
     match = matcher(simulatePosition, target, simulateRotation);
   }
   throw Error(
-    `second layer - find Moves. rotation: ${rotation}. position: ${position}. target: ${target}`,
+    `second layer - find Moves. rotation: ${rotationToString(rotation)}. position: ${position}. target: ${target}.`,
   );
 }
 
 function simulateTopRotation(
-  position: Position,
+  position: TopLayerPosition,
   rotation: THREE.Euler,
 ): {
-  position: Position;
+  position: TopLayerPosition;
   rotation: THREE.Euler;
 } {
   const nextPosition = (() => {
@@ -109,19 +119,19 @@ function simulateTopRotation(
     switch (posName) {
       // BACK
       case `1-2-0`:
-        return [0, 2, 1] as Position;
+        return [0, 2, 1] as TopLayerPosition;
 
       // LEFT
       case `0-2-1`:
-        return [1, 2, 2] as Position;
+        return [1, 2, 2] as TopLayerPosition;
 
       // FRONT
       case `1-2-2`:
-        return [2, 2, 1] as Position;
+        return [2, 2, 1] as TopLayerPosition;
 
       // RIGHT
       case `2-2-1`:
-        return [1, 2, 0] as Position;
+        return [1, 2, 0] as TopLayerPosition;
     }
 
     throw Error(
@@ -248,18 +258,14 @@ function findMatchingMove(position: Position, target: Position): Array<MOVE> {
   throw Error(`find MatchingMove. position: ${position} target: ${target}`);
 }
 
-export function findSwapMoves(
-  position: Position,
-  target: Position,
-  cubes: Cubes,
-): Array<MOVE> {
+export function findSwapMoves(position: Position, cubes: Cubes): Array<MOVE> {
   for (
-    let numOfRotation = 0, simulatePosition = position, simulateCubes = cubes;
+    let numOfRotation = 0, simulateCubes = cubes;
     numOfRotation < 4;
     numOfRotation++
   ) {
-    if (matchSwapPosition(simulatePosition, simulateCubes)) {
-      const positionName = positionToCubeName(simulatePosition);
+    if (isSafeToUsedSecondLayerAlgorithm(position, simulateCubes)) {
+      const positionName = positionToCubeName(position);
       switch (positionName) {
         case `0-1-2`: {
           return [
@@ -298,19 +304,14 @@ export function findSwapMoves(
         }
       }
     }
-
-    simulatePosition = simulateTopRotation(
-      simulatePosition,
-      new Euler(0, 0, 0, 'XYZ'),
-    ).position;
-    cubes = simulateTopRotationCubes(cubes);
+    simulateCubes = simulateTopRotationCubes(cubes);
   }
 
-  throw Error(`findSwapMoves - target: ${target}. cubes: ${cubes}`);
+  throw Error(`findSwapMoves - position: ${position}`);
 }
 
 function simulateTopRotationCubes(cubes: Cubes) {
-  const out = [...cubes];
+  const out = chunk(chunk(flattenArray(cubes), 3), 3);
 
   const chains: Array<Array<number>> = Rubic.cornerChain.reduce(
     (acc, coordinate) => {
@@ -335,7 +336,10 @@ function simulateTopRotationCubes(cubes: Cubes) {
   return out;
 }
 
-function matchSwapPosition(position: Position, cubes: Cubes): boolean {
+function isSafeToUsedSecondLayerAlgorithm(
+  position: Position,
+  cubes: Cubes,
+): boolean {
   const positionName = positionToCubeName(position);
   switch (positionName) {
     case `0-1-2`: {

@@ -145,7 +145,7 @@ export function alignTopBottomFace(
           if (face === FACE.TOP) {
             return MOVE.TOP_C;
           }
-          return MOVE.BOTTOM_C;
+          return MOVE.BOTTOM_CC;
         }),
     );
   } else {
@@ -156,7 +156,7 @@ export function alignTopBottomFace(
           if (face === FACE.TOP) {
             return MOVE.TOP_CC;
           }
-          return MOVE.BOTTOM_CC;
+          return MOVE.BOTTOM_C;
         }),
     );
   }

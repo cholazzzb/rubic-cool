@@ -13,10 +13,12 @@ type XPos = 0 | 1 | 2;
 type YPos = 0 | 1 | 2;
 type ZPos = 0 | 1 | 2;
 export type Position = [XPos, YPos, ZPos];
+export type TopLayerPosition = [XPos, 2, ZPos];
 /**
  * @description format is from coordinate: x-y-z
  */
 export type CubeName = `${Position[0]}-${Position[1]}-${Position[2]}`;
+export type TopLayerCubes = `${Position[0]}-${2}-${Position[2]}`;
 
 export function positionToCubeName(position: Position): CubeName {
   return `${position[0]}-${position[1]}-${position[2]}`;
